@@ -69,10 +69,21 @@ extension TaskListViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
+        let detailLabel = UILabel()
         var content = cell.defaultContentConfiguration()
+        cell.accessoryView = detailLabel
         content.text = "Text"
+        detailLabel.text = "0"
+        detailLabel.sizeToFit()
         cell.contentConfiguration = content
         return cell
+    }
+    
+    private func setupAccessoryView(for cell: UITableViewCell) {
+        let accessoryView = UILabel()
+        accessoryView.translatesAutoresizingMaskIntoConstraints = false
+        accessoryView.text = "0"
+        cell.accessoryView = accessoryView
     }
 }
 

@@ -14,6 +14,7 @@
 		0791B4992A818EC000AD36B4 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0791B4982A818EC000AD36B4 /* TaskListViewController.swift */; };
 		0791B49B2A818EDE00AD36B4 /* TasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0791B49A2A818EDE00AD36B4 /* TasksViewController.swift */; };
 		0791B49D2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0791B49C2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift */; };
+		07D91A792A82FE9A00DEB8CF /* TaskListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D91A782A82FE9A00DEB8CF /* TaskListTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		0791B4982A818EC000AD36B4 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		0791B49A2A818EDE00AD36B4 /* TasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksViewController.swift; sourceTree = "<group>"; };
 		0791B49C2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifferentTaskListViewController.swift; sourceTree = "<group>"; };
+		07D91A782A82FE9A00DEB8CF /* TaskListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			children = (
 				0791B4942A818C0000AD36B4 /* App */,
 				0791B4962A818C1F00AD36B4 /* ViewControllers */,
+				07D91A7A2A82FEA200DEB8CF /* Views */,
 				0791B4952A818C0800AD36B4 /* Storyboards */,
 				0791B4972A818C2900AD36B4 /* Resources */,
 			);
@@ -100,6 +103,14 @@
 				0791B4892A8188AE00AD36B4 /* Assets.xcassets */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		07D91A7A2A82FEA200DEB8CF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				07D91A782A82FE9A00DEB8CF /* TaskListTableViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -174,6 +185,7 @@
 			files = (
 				0791B4812A8188AE00AD36B4 /* AppDelegate.swift in Sources */,
 				0791B49D2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift in Sources */,
+				07D91A792A82FE9A00DEB8CF /* TaskListTableViewCell.swift in Sources */,
 				0791B49B2A818EDE00AD36B4 /* TasksViewController.swift in Sources */,
 				0791B4832A8188AE00AD36B4 /* SceneDelegate.swift in Sources */,
 				0791B4992A818EC000AD36B4 /* TaskListViewController.swift in Sources */,

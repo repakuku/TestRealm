@@ -21,12 +21,20 @@ class TasksViewController: UITableViewController {
         setupNavigationBar()
     }
     
+    @objc private func addTask() {
+        
+    }
+    
     // MARK: - Private Methods
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let editButton = editButtonItem
-        let addButton = UIBarButtonItem(systemItem: .add)
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addTask)
+        )
         
         navigationItem.rightBarButtonItems = [addButton, editButton]
     }
