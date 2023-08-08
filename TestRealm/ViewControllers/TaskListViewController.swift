@@ -69,5 +69,7 @@ extension TaskListViewController {
 
 // MARK: - UITableViewDelegate
 extension TaskListViewController {
-    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        show(TasksViewController(), sender: nil)
+    }
 }
