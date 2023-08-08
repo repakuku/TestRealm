@@ -72,18 +72,11 @@ extension TaskListViewController {
         let detailLabel = UILabel()
         var content = cell.defaultContentConfiguration()
         cell.accessoryView = detailLabel
-        content.text = "Text"
-        detailLabel.text = "0"
+        content.text = "Task List"
+        detailLabel.text = "1"
         detailLabel.sizeToFit()
         cell.contentConfiguration = content
         return cell
-    }
-    
-    private func setupAccessoryView(for cell: UITableViewCell) {
-        let accessoryView = UILabel()
-        accessoryView.translatesAutoresizingMaskIntoConstraints = false
-        accessoryView.text = "0"
-        cell.accessoryView = accessoryView
     }
 }
 
