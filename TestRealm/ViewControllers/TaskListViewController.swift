@@ -33,14 +33,23 @@ class TaskListViewController: UITableViewController {
         
         setupConstraints()
     }
+    
+    @objc private func addTaskList() {
+        
+    }
 
     // MARK: - Private Methods
     private func setupNavigationBar() {
         title = "Task List"
         navigationController?.navigationBar.prefersLargeTitles = true
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .edit)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .add)
+        navigationItem.leftBarButtonItem = editButtonItem
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addTaskList)
+        )
     }
     
     private func setupConstraints() {
