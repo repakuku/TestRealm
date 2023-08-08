@@ -9,8 +9,10 @@ import UIKit
 
 class TaskListViewController: UITableViewController {
     
+    // MARK: - Private Properties
     private let cellID = "taskList"
 
+    // MARK: - UIViews
     private lazy var segmentedControl: UISegmentedControl = {
         let items = ["Date", "A-Z"]
         let segmentedControl = UISegmentedControl(items: items)
@@ -19,6 +21,7 @@ class TaskListViewController: UITableViewController {
         return segmentedControl
     }()
     
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,9 +32,28 @@ class TaskListViewController: UITableViewController {
         tableView.tableHeaderView = segmentedControl
         
         setupConstraints()
-        
+    }
+
+    // MARK: - Private Methods
+    private func setupNavigationBar() {
+        title = "Task List"
+        navigationController?.navigationBar.prefersLargeTitles = true
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .edit)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .add)
     }
     
+    private func setupConstraints() {
+        NSLayoutConstraint.activate(
+            [
+                segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
+            ]
+        )
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension TaskListViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         1
     }
@@ -43,20 +65,9 @@ class TaskListViewController: UITableViewController {
         cell.contentConfiguration = content
         return cell
     }
-    
-    
-    
-    private func setupNavigationBar() {
-        title = "Task List"
-        navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    
-    private func setupConstraints() {
-        NSLayoutConstraint.activate(
-            [
-                segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
-            ]
-        )
-    }
+}
+
+// MARK: - UITableViewDelegate
+extension TaskListViewController {
     
 }
