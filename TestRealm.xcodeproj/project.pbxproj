@@ -13,6 +13,7 @@
 		0791B48D2A8188AE00AD36B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0791B48B2A8188AE00AD36B4 /* LaunchScreen.storyboard */; };
 		0791B4992A818EC000AD36B4 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0791B4982A818EC000AD36B4 /* TaskListViewController.swift */; };
 		0791B49B2A818EDE00AD36B4 /* TasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0791B49A2A818EDE00AD36B4 /* TasksViewController.swift */; };
+		0791B49D2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0791B49C2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		0791B48E2A8188AE00AD36B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0791B4982A818EC000AD36B4 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		0791B49A2A818EDE00AD36B4 /* TasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksViewController.swift; sourceTree = "<group>"; };
+		0791B49C2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifferentTaskListViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 			children = (
 				0791B4982A818EC000AD36B4 /* TaskListViewController.swift */,
 				0791B49A2A818EDE00AD36B4 /* TasksViewController.swift */,
+				0791B49C2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0791B4812A8188AE00AD36B4 /* AppDelegate.swift in Sources */,
+				0791B49D2A82AB9E00AD36B4 /* DifferentTaskListViewController.swift in Sources */,
 				0791B49B2A818EDE00AD36B4 /* TasksViewController.swift in Sources */,
 				0791B4832A8188AE00AD36B4 /* SceneDelegate.swift in Sources */,
 				0791B4992A818EC000AD36B4 /* TaskListViewController.swift in Sources */,

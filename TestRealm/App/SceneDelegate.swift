@@ -16,6 +16,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         window?.makeKeyAndVisible()
+        
+        // UIViewController с UITableView
+//        window?.rootViewController = UINavigationController(rootViewController: DifferentTaskListViewController())
+        // UITableViewController
         window?.rootViewController = UINavigationController(rootViewController: TaskListViewController())
     }
 
