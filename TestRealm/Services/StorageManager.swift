@@ -24,16 +24,5 @@ final class StorageManager {
         guard let data = try? JSONEncoder().encode(taskLists) else { return }
         UserDefaults.standard.set(data, forKey: key)
     }
-    
-//    func doneAllTasks(at index: Int ) {
-//        for taskIndex in 0..<taskLists[index].tasks.count {
-//            taskLists[index].tasks[taskIndex].isComplete = true
-//        }
-//        save()
-//    }
-//    
-//    func doneTask(at taskIndex: Int, inTaskListAt taskListIndex: Int) {
-//        taskLists[taskListIndex].tasks[taskIndex].isComplete.toggle()
-//        save()
-//    }
+
 }
