@@ -28,6 +28,13 @@ final class StorageManager {
         userDefaults.set(data, forKey: key)
     }
     
+    func save(_ task: Task, toTaskListAt index: Int) {
+        var taskLists = fetchData()
+        taskLists[index].tasks.append(task)
+        guard let data = try? JSONEncoder().encode(taskLists) else { return }
+        userDefaults.set(data, forKey: key)
+    }
+    
     func deleteTaskList(at index: Int) {
         var taskLists = fetchData()
         taskLists.remove(at: index)

@@ -11,12 +11,12 @@ class TasksViewController: UITableViewController {
     
     // MARK: - Properties
     unowned var delegate: TasksViewControllerDelegate!
-
+    var taskList: TaskList!
+    var taskListIndex: Int!
     
     // MARK: - Private Properties
     private let cellID = "tasks"
     private let storageManager = StorageManager.shared
-    
     private var completedTasks: [Task] = []
     private var currentTasks: [Task] = []
     
@@ -27,17 +27,29 @@ class TasksViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         
         setupNavigationBar()
+        
+        currentTasks = taskList.tasks.filter { !$0.isComplete }
+        completedTasks = taskList.tasks.filter { $0.isComplete }
     }
 
     // MARK: - Private Methods
     @objc private func addTask() {
-
+        let task = Task(
+            title: "Task title",
+            note: "Task description",
+            date: Date(),
+            isComplete: false
+        )
+        currentTasks.append(task)
+        delegate.add(task, toTaskListAt: taskListIndex)
+        tableView.reloadData()
     }
     
 
     
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
+        title = taskList.title
         
         let editButton = editButtonItem
         let addButton = UIBarButtonItem(

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TasksViewControllerDelegate: AnyObject {
-    
+    func add(_ task: Task, toTaskListAt index: Int)
 }
 
 class TaskListViewController: UITableViewController {
@@ -106,6 +106,8 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let tasksVC = TasksViewController()
         tasksVC.delegate = self
+        tasksVC.taskList = taskLists[indexPath.row]
+        tasksVC.taskListIndex = indexPath.row
         show(tasksVC, sender: nil)
     }
     
@@ -145,5 +147,9 @@ extension TaskListViewController {
 }
 
 extension TaskListViewController: TasksViewControllerDelegate {
-
+    func add(_ task: Task, toTaskListAt index: Int) {
+        taskLists[index].tasks.append(task)
+        storageManager.save(task, toTaskListAt: index)
+        tableView.reloadData()
+    }
 }
