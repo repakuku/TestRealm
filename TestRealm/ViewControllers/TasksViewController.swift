@@ -13,7 +13,7 @@ class TasksViewController: UITableViewController {
     unowned var delegate: TasksViewControllerDelegate!
     
     var taskList: TaskList!
-    var taskListindex: Int!
+    var taskListIndex: Int!
     
     // MARK: - Private Properties
     private let cellID = "tasks"
@@ -38,7 +38,7 @@ class TasksViewController: UITableViewController {
         let number = taskList.tasks.count
         let task = Task(title: "Task \(number)", note: "Note", date: Date(), isComplete: false)
         taskList.tasks.append(task)
-        delegate.update(taskList, at: taskListindex)
+        delegate.update(taskList, at: taskListIndex)
         updateTasks()
         tableView.reloadData()
     }
@@ -98,7 +98,7 @@ extension TasksViewController {
             style: .destructive,
             title: "Delete") { [unowned self]  _, _, _ in
                 taskList.tasks.remove(at: index)
-                delegate.update(taskList, at: taskListindex)
+                delegate.update(taskList, at: taskListIndex)
                 updateTasks()
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
@@ -115,7 +115,7 @@ extension TasksViewController {
             style: .normal,
             title: doneButtonTitle) { [unowned self] _, _, isDone in
                 taskList.tasks[index].isComplete.toggle()
-                delegate.update(taskList, at: taskListindex)
+                delegate.update(taskList, at: taskListIndex)
                 updateTasks()
                 tableView.reloadData()
                 isDone(true)

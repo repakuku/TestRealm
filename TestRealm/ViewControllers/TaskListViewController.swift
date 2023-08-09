@@ -37,15 +37,9 @@ class TaskListViewController: UITableViewController {
         
         setupNavigationBar()
         
-        tableView.tableHeaderView = segmentedControl
-        
-        setupConstraints()
+        setupSegmentedControl()
         
         fetchTaskLists()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
     }
 
     // MARK: - Private Methods
@@ -70,7 +64,9 @@ class TaskListViewController: UITableViewController {
         )
     }
     
-    private func setupConstraints() {
+    private func setupSegmentedControl() {
+        tableView.tableHeaderView = segmentedControl
+        
         NSLayoutConstraint.activate(
             [
                 segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
@@ -92,17 +88,21 @@ extension TaskListViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
-        let detailLabel = UILabel()
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         
-        cell.accessoryView = detailLabel
         content.text = taskList.title
         cell.contentConfiguration = content
         
-        detailLabel.text = taskList.tasks.count.formatted()
-        detailLabel.sizeToFit()
-        detailLabel.textColor = .systemGray
+        if taskList.tasks.count == 0 || taskList.tasks.contains(where: { !$0.isComplete }) {
+            let detailsLabel = UILabel()
+            detailsLabel.text = taskList.tasks.count.formatted()
+            detailsLabel.textColor = .systemGray
+            detailsLabel.sizeToFit()
+            cell.accessoryView = detailsLabel
+        } else if taskList.tasks.count > 0 {
+            cell.accessoryType = .checkmark
+        }
         
         return cell
     }
@@ -114,7 +114,7 @@ extension TaskListViewController {
         let tasksVC = TasksViewController()
         tasksVC.delegate = self
         tasksVC.taskList = taskLists[indexPath.row]
-        tasksVC.taskListindex = indexPath.row
+        tasksVC.taskListIndex = indexPath.row
         show(tasksVC, sender: nil)
     }
     
@@ -136,7 +136,12 @@ extension TaskListViewController {
         
         let doneAction = UIContextualAction(
             style: .normal,
-            title: "Done") { _, _, isDone in
+            title: "Done") { [unowned self] _, _, isDone in
+                for taskIndex in 0..<taskLists[indexPath.row].tasks.count {
+                    taskLists[indexPath.row].tasks[taskIndex].isComplete = true
+                }
+                storageManager.save(taskLists)
+                tableView.reloadData()
                 isDone(true)
             }
         
@@ -149,8 +154,8 @@ extension TaskListViewController {
 
 extension TaskListViewController: TasksViewControllerDelegate {
     func update(_ taskList: TaskList, at index: Int) {
-        taskLists.remove(at: index)
-        taskLists.insert(taskList, at: index)
+        taskLists[index] = taskList
         storageManager.save(taskLists)
+        tableView.reloadData()
     }
 }
