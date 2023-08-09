@@ -85,4 +85,30 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         show(TasksViewController(), sender: nil)
     }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: "Delete") { _, _, _ in
+                
+            }
+        
+        let editAction = UIContextualAction(
+            style: .normal,
+            title: "Edit") { _, _, isDone in
+                
+                isDone(true)
+            }
+        
+        let doneAction = UIContextualAction(
+            style: .normal,
+            title: "Done") { _, _, isDone in
+                isDone(true)
+            }
+        
+        editAction.backgroundColor = .systemOrange
+        doneAction.backgroundColor = .systemGreen
+        
+        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
+    }
 }
