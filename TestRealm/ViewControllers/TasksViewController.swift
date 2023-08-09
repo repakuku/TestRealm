@@ -10,7 +10,10 @@ import UIKit
 class TasksViewController: UITableViewController {
     
     // MARK: - Properties
-    var taskListIndexPath: IndexPath!
+    unowned var delegate: TasksViewControllerDelegate!
+    
+    var taskList: TaskList!
+    var taskListindex: Int!
     
     // MARK: - Private Properties
     private let cellID = "tasks"
@@ -27,23 +30,21 @@ class TasksViewController: UITableViewController {
         
         setupNavigationBar()
         
-        currentTasks = storageManager.taskLists[taskListIndexPath.row].tasks.filter { !$0.isComplete }
-        completedTasks = storageManager.taskLists[taskListIndexPath.row].tasks.filter { $0.isComplete }
+        currentTasks = taskList.tasks.filter { !$0.isComplete }
+        completedTasks = taskList.tasks.filter { $0.isComplete }
     }
 
     // MARK: - Private Methods
     @objc private func addTask() {
-        let taskList = storageManager.taskLists[taskListIndexPath.row]
         let number = taskList.tasks.count
         let task = Task(title: "Task \(number)", note: "Note", date: Date(), isComplete: false)
-        storageManager.taskLists[taskListIndexPath.row].tasks.append(task)
-        storageManager.save()
+        taskList.tasks.append(task)
+        delegate.update(taskList, at: taskListindex)
         tableView.reloadData()
     }
     
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        let taskList = storageManager.taskLists[taskListIndexPath.row]
         title = taskList.title
         
         let editButton = editButtonItem
@@ -74,8 +75,7 @@ extension TasksViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         var content = cell.defaultContentConfiguration()
-        let taskList = storageManager.taskLists[taskListIndexPath.row]
-        let task = taskList.tasks[indexPath.row]
+        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
         content.text = task.title
         content.secondaryText = task.note
         cell.contentConfiguration = content
@@ -88,9 +88,8 @@ extension TasksViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Delete") { [unowned self] _, _, _ in
-                storageManager.taskLists[indexPath.row].tasks.remove(at: indexPath.row)
-                storageManager.save()
+            title: "Delete") { _, _, _ in
+                
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         
@@ -104,6 +103,7 @@ extension TasksViewController {
         let doneAction = UIContextualAction(
             style: .normal,
             title: "Done") { _, _, isDone in
+                
                 isDone(true)
             }
         
