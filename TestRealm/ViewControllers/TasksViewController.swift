@@ -11,9 +11,7 @@ class TasksViewController: UITableViewController {
     
     // MARK: - Properties
     unowned var delegate: TasksViewControllerDelegate!
-    
-    var taskList: TaskList!
-    var taskListIndex: Int!
+
     
     // MARK: - Private Properties
     private let cellID = "tasks"
@@ -29,28 +27,17 @@ class TasksViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         
         setupNavigationBar()
-        
-        updateTasks()
     }
 
     // MARK: - Private Methods
     @objc private func addTask() {
-        let number = taskList.tasks.count
-        let task = Task(title: "Task \(number)", note: "Note", date: Date(), isComplete: false)
-        taskList.tasks.append(task)
-        delegate.update(taskList, at: taskListIndex)
-        updateTasks()
-        tableView.reloadData()
+
     }
     
-    private func updateTasks() {
-        currentTasks = taskList.tasks.filter { !$0.isComplete }
-        completedTasks = taskList.tasks.filter { $0.isComplete }
-    }
+
     
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        title = taskList.title
         
         let editButton = editButtonItem
         let addButton = UIBarButtonItem(
@@ -91,16 +78,12 @@ extension TasksViewController {
 // MARK: - UITableViewDelegate
 extension TasksViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
-        guard let index = taskList.tasks.firstIndex(of: task) else { return UISwipeActionsConfiguration() }
+
         
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: "Delete") { [unowned self]  _, _, _ in
-                taskList.tasks.remove(at: index)
-                delegate.update(taskList, at: taskListIndex)
-                updateTasks()
-                tableView.deleteRows(at: [indexPath], with: .automatic)
+
             }
         
         let editAction = UIContextualAction(
@@ -114,16 +97,13 @@ extension TasksViewController {
         let doneAction = UIContextualAction(
             style: .normal,
             title: doneButtonTitle) { [unowned self] _, _, isDone in
-                taskList.tasks[index].isComplete.toggle()
-                delegate.update(taskList, at: taskListIndex)
-                updateTasks()
-                tableView.reloadData()
-                isDone(true)
+
             }
         
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
+        return UISwipeActionsConfiguration(actions: [])
+//        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
     }
 }

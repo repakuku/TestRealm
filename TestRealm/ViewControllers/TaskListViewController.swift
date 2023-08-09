@@ -8,16 +8,14 @@
 import UIKit
 
 protocol TasksViewControllerDelegate: AnyObject {
-    func update(_ taskList: TaskList, at index: Int)
+    
 }
 
 class TaskListViewController: UITableViewController {
-    
-    // MARK: - Properties
-    var taskLists: [TaskList] = []
-    
+
     // MARK: - Private Properties
     private let cellID = "taskList"
+    private var taskLists: [TaskList] = []
     private let storageManager = StorageManager.shared
 
     // MARK: - UIViews
@@ -39,7 +37,7 @@ class TaskListViewController: UITableViewController {
         
         setupSegmentedControl()
         
-        fetchTaskLists()
+        taskLists = storageManager.fetchData()
     }
 
     // MARK: - Private Methods
@@ -47,7 +45,7 @@ class TaskListViewController: UITableViewController {
         let number = taskLists.count
         let taskList = TaskList(title: "Task List \(number)", data: Date(), tasks: [])
         taskLists.append(taskList)
-        storageManager.save(taskLists)
+        storageManager.save(taskList)
         tableView.reloadData()
     }
     
@@ -72,11 +70,6 @@ class TaskListViewController: UITableViewController {
                 segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
             ]
         )
-    }
-    
-    private func fetchTaskLists() {
-        taskLists = storageManager.fetchData()
-        tableView.reloadData()
     }
 }
 
@@ -113,8 +106,6 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let tasksVC = TasksViewController()
         tasksVC.delegate = self
-        tasksVC.taskList = taskLists[indexPath.row]
-        tasksVC.taskListIndex = indexPath.row
         show(tasksVC, sender: nil)
     }
     
@@ -123,7 +114,7 @@ extension TaskListViewController {
             style: .destructive,
             title: "Delete") { [unowned self] _, _, _ in
                 taskLists.remove(at: indexPath.row)
-                storageManager.save(taskLists)
+                storageManager.deleteTaskList(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         
@@ -140,7 +131,7 @@ extension TaskListViewController {
                 for taskIndex in 0..<taskLists[indexPath.row].tasks.count {
                     taskLists[indexPath.row].tasks[taskIndex].isComplete = true
                 }
-                storageManager.save(taskLists)
+                
                 tableView.reloadData()
                 isDone(true)
             }
@@ -148,14 +139,11 @@ extension TaskListViewController {
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+//        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
     }
 }
 
 extension TaskListViewController: TasksViewControllerDelegate {
-    func update(_ taskList: TaskList, at index: Int) {
-        taskLists[index] = taskList
-        storageManager.save(taskLists)
-        tableView.reloadData()
-    }
+
 }
