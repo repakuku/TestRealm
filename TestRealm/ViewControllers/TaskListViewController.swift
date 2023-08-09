@@ -9,6 +9,9 @@ import UIKit
 
 class TaskListViewController: UITableViewController {
     
+    // MARK: - Properties
+    var taskLists: [TaskList] = []
+    
     // MARK: - Private Properties
     private let cellID = "taskList"
 
@@ -35,7 +38,10 @@ class TaskListViewController: UITableViewController {
     }
     
     @objc private func addTaskList() {
-        
+        let number = taskLists.count
+        let taskList = TaskList(title: "Task List \(number)", data: Date(), tasks: [])
+        taskLists.append(taskList)
+        tableView.reloadData()
     }
 
     // MARK: - Private Methods
@@ -64,19 +70,20 @@ class TaskListViewController: UITableViewController {
 // MARK: - UITableViewDataSource
 extension TaskListViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        taskLists.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         let detailLabel = UILabel()
         var content = cell.defaultContentConfiguration()
+        let taskList = taskLists[indexPath.row]
         
         cell.accessoryView = detailLabel
-        content.text = "Task List"
+        content.text = taskList.title
         cell.contentConfiguration = content
         
-        detailLabel.text = "1"
+        detailLabel.text = taskList.tasks.count.formatted()
         detailLabel.sizeToFit()
         detailLabel.textColor = .systemGray
         
@@ -87,14 +94,18 @@ extension TaskListViewController {
 // MARK: - UITableViewDelegate
 extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        show(TasksViewController(), sender: nil)
+        let tasksVC = TasksViewController()
+        let taskList = taskLists[indexPath.row]
+        tasksVC.taskList = taskList
+        show(tasksVC, sender: nil)
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Delete") { _, _, _ in
-                
+            title: "Delete") { [unowned self] _, _, _ in
+                taskLists.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         
         let editAction = UIContextualAction(
