@@ -16,6 +16,9 @@ class TasksViewController: UITableViewController {
     private let cellID = "tasks"
     private let storageManager = StorageManager.shared
     
+    private var completedTasks: [Task] = []
+    private var currentTasks: [Task] = []
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +26,9 @@ class TasksViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         
         setupNavigationBar()
+        
+        currentTasks = storageManager.taskLists[taskListIndexPath.row].tasks.filter { !$0.isComplete }
+        completedTasks = storageManager.taskLists[taskListIndexPath.row].tasks.filter { $0.isComplete }
     }
 
     // MARK: - Private Methods
@@ -53,9 +59,16 @@ class TasksViewController: UITableViewController {
 
 // MARK: - UITableViewDataSource
 extension TasksViewController {
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        section == 0 ? "CURRENT TASKS" : "COMPLETED TASKS"
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let taskList = storageManager.taskLists[taskListIndexPath.row]
-        return taskList.tasks.count
+        section == 0 ? currentTasks.count : completedTasks.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
