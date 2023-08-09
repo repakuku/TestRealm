@@ -10,10 +10,11 @@ import UIKit
 class TaskListViewController: UITableViewController {
     
     // MARK: - Properties
-    var taskLists: [TaskList] = []
+//    var taskLists: [TaskList] = []
     
     // MARK: - Private Properties
     private let cellID = "taskList"
+    private let storageManager = StorageManager.shared
 
     // MARK: - UIViews
     private lazy var segmentedControl: UISegmentedControl = {
@@ -35,16 +36,23 @@ class TaskListViewController: UITableViewController {
         tableView.tableHeaderView = segmentedControl
         
         setupConstraints()
+        
+        fetchTaskLists()
     }
     
-    @objc private func addTaskList() {
-        let number = taskLists.count
-        let taskList = TaskList(title: "Task List \(number)", data: Date(), tasks: [])
-        taskLists.append(taskList)
+    override func viewWillAppear(_ animated: Bool) {
         tableView.reloadData()
     }
 
     // MARK: - Private Methods
+    @objc private func addTaskList() {
+        let number = storageManager.taskLists.count
+        let taskList = TaskList(title: "Task List \(number)", data: Date(), tasks: [])
+        storageManager.taskLists.append(taskList)
+        storageManager.save()
+        tableView.reloadData()
+    }
+    
     private func setupNavigationBar() {
         title = "Task List"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -65,19 +73,24 @@ class TaskListViewController: UITableViewController {
             ]
         )
     }
+    
+    private func fetchTaskLists() {
+        storageManager.fetchData()
+        tableView.reloadData()
+    }
 }
 
 // MARK: - UITableViewDataSource
 extension TaskListViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        taskLists.count
+        storageManager.taskLists.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         let detailLabel = UILabel()
         var content = cell.defaultContentConfiguration()
-        let taskList = taskLists[indexPath.row]
+        let taskList = storageManager.taskLists[indexPath.row]
         
         cell.accessoryView = detailLabel
         content.text = taskList.title
@@ -95,8 +108,7 @@ extension TaskListViewController {
 extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let tasksVC = TasksViewController()
-        let taskList = taskLists[indexPath.row]
-        tasksVC.taskList = taskList
+        tasksVC.taskListIndexPath = indexPath
         show(tasksVC, sender: nil)
     }
     
@@ -104,7 +116,8 @@ extension TaskListViewController {
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: "Delete") { [unowned self] _, _, _ in
-                taskLists.remove(at: indexPath.row)
+                storageManager.taskLists.remove(at: indexPath.row)
+                storageManager.save()
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         

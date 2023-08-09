@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct TaskList {
+struct TaskList: Codable {
     var title = ""
     var data = Date()
     var tasks: [Task] = []
 }
 
-struct Task {
+struct Task: Codable {
     var title = ""
     var note = ""
     var date = Date()

@@ -10,10 +10,11 @@ import UIKit
 class TasksViewController: UITableViewController {
     
     // MARK: - Properties
-    var taskList: TaskList!
+    var taskListIndexPath: IndexPath!
     
     // MARK: - Private Properties
     private let cellID = "tasks"
+    private let storageManager = StorageManager.shared
     
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -23,17 +24,20 @@ class TasksViewController: UITableViewController {
         
         setupNavigationBar()
     }
-    
+
+    // MARK: - Private Methods
     @objc private func addTask() {
+        let taskList = storageManager.taskLists[taskListIndexPath.row]
         let number = taskList.tasks.count
         let task = Task(title: "Task \(number)", note: "Note", date: Date(), isComplete: false)
-        taskList.tasks.append(task)
+        storageManager.taskLists[taskListIndexPath.row].tasks.append(task)
+        storageManager.save()
         tableView.reloadData()
     }
     
-    // MARK: - Private Methods
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
+        let taskList = storageManager.taskLists[taskListIndexPath.row]
         title = taskList.title
         
         let editButton = editButtonItem
@@ -45,18 +49,19 @@ class TasksViewController: UITableViewController {
         
         navigationItem.rightBarButtonItems = [addButton, editButton]
     }
-    
 }
 
 // MARK: - UITableViewDataSource
 extension TasksViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        taskList.tasks.count
+        let taskList = storageManager.taskLists[taskListIndexPath.row]
+        return taskList.tasks.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         var content = cell.defaultContentConfiguration()
+        let taskList = storageManager.taskLists[taskListIndexPath.row]
         let task = taskList.tasks[indexPath.row]
         content.text = task.title
         content.secondaryText = task.note
@@ -71,7 +76,8 @@ extension TasksViewController {
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: "Delete") { [unowned self] _, _, _ in
-                taskList.tasks.remove(at: indexPath.row)
+                storageManager.taskLists[indexPath.row].tasks.remove(at: indexPath.row)
+                storageManager.save()
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         
