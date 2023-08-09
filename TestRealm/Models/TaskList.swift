@@ -13,7 +13,7 @@ struct TaskList: Codable {
     var tasks: [Task] = []
 }
 
-struct Task: Codable {
+struct Task: Codable, Equatable {
     var title = ""
     var note = ""
     var date = Date()

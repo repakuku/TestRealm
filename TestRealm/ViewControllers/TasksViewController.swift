@@ -30,8 +30,7 @@ class TasksViewController: UITableViewController {
         
         setupNavigationBar()
         
-        currentTasks = taskList.tasks.filter { !$0.isComplete }
-        completedTasks = taskList.tasks.filter { $0.isComplete }
+        updateTasks()
     }
 
     // MARK: - Private Methods
@@ -40,7 +39,13 @@ class TasksViewController: UITableViewController {
         let task = Task(title: "Task \(number)", note: "Note", date: Date(), isComplete: false)
         taskList.tasks.append(task)
         delegate.update(taskList, at: taskListindex)
+        updateTasks()
         tableView.reloadData()
+    }
+    
+    private func updateTasks() {
+        currentTasks = taskList.tasks.filter { !$0.isComplete }
+        completedTasks = taskList.tasks.filter { $0.isComplete }
     }
     
     private func setupNavigationBar() {
@@ -88,8 +93,12 @@ extension TasksViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Delete") { _, _, _ in
-                
+            title: "Delete") { [unowned self]  _, _, _ in
+                let deletedTask = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+                guard let index = taskList.tasks.firstIndex(of: deletedTask) else { return }
+                taskList.tasks.remove(at: index)
+                delegate.update(taskList, at: taskListindex)
+                updateTasks()
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         
