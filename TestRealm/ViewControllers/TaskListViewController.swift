@@ -71,11 +71,15 @@ extension TaskListViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         let detailLabel = UILabel()
         var content = cell.defaultContentConfiguration()
+        
         cell.accessoryView = detailLabel
         content.text = "Task List"
+        cell.contentConfiguration = content
+        
         detailLabel.text = "1"
         detailLabel.sizeToFit()
-        cell.contentConfiguration = content
+        detailLabel.textColor = .systemGray
+        
         return cell
     }
 }
