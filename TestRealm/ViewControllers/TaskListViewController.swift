@@ -9,6 +9,7 @@ import UIKit
 
 protocol TasksViewControllerDelegate: AnyObject {
     func add(_ task: Task, toTaskListAt index: Int)
+    func deleteTask(at taskIndex: Int, inTaskListAt taskListIndex: Int)
 }
 
 class TaskListViewController: UITableViewController {
@@ -150,6 +151,12 @@ extension TaskListViewController: TasksViewControllerDelegate {
     func add(_ task: Task, toTaskListAt index: Int) {
         taskLists[index].tasks.append(task)
         storageManager.save(task, toTaskListAt: index)
+        tableView.reloadData()
+    }
+    
+    func deleteTask(at taskIndex : Int, inTaskListAt taskListIndex: Int) {
+        taskLists[taskListIndex].tasks.remove(at: taskIndex)
+        storageManager.deleteTask(at: taskIndex, inTaskListAt: taskListIndex)
         tableView.reloadData()
     }
 }

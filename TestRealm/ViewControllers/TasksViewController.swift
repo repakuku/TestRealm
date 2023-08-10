@@ -34,12 +34,14 @@ class TasksViewController: UITableViewController {
 
     // MARK: - Private Methods
     @objc private func addTask() {
+        let title = "Task \(taskList.tasks.count + 1)"
         let task = Task(
-            title: "Task title",
+            title: title,
             note: "Task description",
             date: Date(),
             isComplete: false
         )
+        taskList.tasks.append(task)
         currentTasks.append(task)
         delegate.add(task, toTaskListAt: taskListIndex)
         tableView.reloadData()
@@ -90,12 +92,17 @@ extension TasksViewController {
 // MARK: - UITableViewDelegate
 extension TasksViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
+        guard let taskIndex = taskList.tasks.firstIndex(of: indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]) else { return UISwipeActionsConfiguration() }
         
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: "Delete") { [unowned self]  _, _, _ in
-
+                if indexPath.section == 0 {
+                    currentTasks.remove(at: indexPath.row)
+                    taskList.tasks.remove(at: taskIndex)
+                    delegate.deleteTask(at: taskIndex, inTaskListAt: taskListIndex)
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                }
             }
         
         let editAction = UIContextualAction(
@@ -115,7 +122,7 @@ extension TasksViewController {
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [])
+        return UISwipeActionsConfiguration(actions: [deleteAction])
 //        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
     }
 }
