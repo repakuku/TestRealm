@@ -99,10 +99,12 @@ extension TasksViewController {
             title: "Delete") { [unowned self]  _, _, _ in
                 if indexPath.section == 0 {
                     currentTasks.remove(at: indexPath.row)
-                    taskList.tasks.remove(at: taskIndex)
-                    delegate.deleteTask(at: taskIndex, inTaskListAt: taskListIndex)
-                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                } else {
+                    completedTasks.remove(at: indexPath.row)
                 }
+                taskList.tasks.remove(at: taskIndex)
+                delegate.deleteTask(at: taskIndex, inTaskListAt: taskListIndex)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         
         let editAction = UIContextualAction(
@@ -116,13 +118,25 @@ extension TasksViewController {
         let doneAction = UIContextualAction(
             style: .normal,
             title: doneButtonTitle) { [unowned self] _, _, isDone in
-
+                if indexPath.section == 0 {
+                    currentTasks[indexPath.row].isComplete.toggle()
+                    let removedTask = currentTasks.remove(at: indexPath.row)
+                    completedTasks.append(removedTask)
+                } else {
+                    completedTasks[indexPath.row].isComplete.toggle()
+                    let removedTask = completedTasks.remove(at: indexPath.row)
+                    currentTasks.append(removedTask)
+                }
+                taskList.tasks[taskIndex].isComplete.toggle()
+                delegate.doneTask(at: taskIndex, inTaskListAt: taskListIndex)
+                
+                tableView.reloadData()
             }
         
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [deleteAction])
+        return UISwipeActionsConfiguration(actions: [doneAction, deleteAction])
 //        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
     }
 }

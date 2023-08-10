@@ -10,6 +10,7 @@ import UIKit
 protocol TasksViewControllerDelegate: AnyObject {
     func add(_ task: Task, toTaskListAt index: Int)
     func deleteTask(at taskIndex: Int, inTaskListAt taskListIndex: Int)
+    func doneTask(at taskIndex: Int, inTaskListAt taskListIndex: Int)
 }
 
 class TaskListViewController: UITableViewController {
@@ -134,7 +135,7 @@ extension TaskListViewController {
                 for taskIndex in 0..<taskLists[indexPath.row].tasks.count {
                     taskLists[indexPath.row].tasks[taskIndex].isComplete = true
                 }
-                
+                storageManager.doneTaskList(at: indexPath.row)
                 tableView.reloadData()
                 isDone(true)
             }
@@ -142,8 +143,7 @@ extension TaskListViewController {
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [deleteAction])
-//        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
+        return UISwipeActionsConfiguration(actions: [doneAction, deleteAction])
     }
 }
 
@@ -157,6 +157,12 @@ extension TaskListViewController: TasksViewControllerDelegate {
     func deleteTask(at taskIndex : Int, inTaskListAt taskListIndex: Int) {
         taskLists[taskListIndex].tasks.remove(at: taskIndex)
         storageManager.deleteTask(at: taskIndex, inTaskListAt: taskListIndex)
+        tableView.reloadData()
+    }
+    
+    func doneTask(at taskIndex: Int, inTaskListAt taskListIndex: Int) {
+        taskLists[taskListIndex].tasks[taskIndex].isComplete.toggle()
+        storageManager.doneTask(at: taskIndex, inTaskListAt: taskListIndex)
         tableView.reloadData()
     }
 }
