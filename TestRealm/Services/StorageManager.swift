@@ -26,8 +26,7 @@ final class StorageManager {
         userDefaults.set(data, forKey: key)
     }
     
-    // Task List
-    
+    // MARK: - Task List
     func save(_ taskList: TaskList) {
         var taskLists = fetchData()
         taskLists.append(taskList)
@@ -54,7 +53,7 @@ final class StorageManager {
         save(taskLists)
     }
     
-    // Task
+    // MARK: - Task
     func save(_ task: Task, toTaskListAt index: Int) {
         var taskLists = fetchData()
         taskLists[index].tasks.append(task)
@@ -70,6 +69,15 @@ final class StorageManager {
     func doneTask(at taskIndex: Int, inTaskListAt tasklistIndex: Int) {
         var taskLists = fetchData()
         taskLists[tasklistIndex].tasks[taskIndex].isComplete.toggle()
+        save(taskLists)
+    }
+    
+    func editTask(at taskIndex: Int, inTaskListAt taskListIndex: Int, withTitle newTitle: String, andNote newNote: String?) {
+        var taskLists = fetchData()
+        taskLists[taskListIndex].tasks[taskIndex].title = newTitle
+        if let newNote {
+            taskLists[taskListIndex].tasks[taskIndex].note = newNote
+        }
         save(taskLists)
     }
 }

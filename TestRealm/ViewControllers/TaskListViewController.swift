@@ -155,10 +155,9 @@ extension TaskListViewController {
         let editAction = UIContextualAction(
             style: .normal,
             title: "Edit") { [unowned self] _, _, isDone in
-                self.showAlert(
-                    withTaskListAt: indexPath.row) {
-                        tableView.reloadRows(at: [indexPath], with: .automatic)
-                    }
+                self.showAlert(withTaskListAt: indexPath.row) {
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                }
                 isDone(true)
             }
         
@@ -199,12 +198,12 @@ extension TaskListViewController: TasksViewControllerDelegate {
         tableView.reloadData()
     }
     
-    func editTask(at taskIndex: Int, inTaskListAt taskListIndex: Int, withTitle newTitle: String, andNote note: String? = nil) {
-        taskLists[taskListIndex].tasks[taskIndex].title = newTitle
+    func editTask(at taskIndex: Int, inTaskListAt taskListIndex: Int, withTitle title: String, andNote note: String? = nil) {
+        taskLists[taskListIndex].tasks[taskIndex].title = title
         if let note {
             taskLists[taskListIndex].tasks[taskIndex] .note = note
         }
-        // storageManager
+        storageManager.editTask(at: taskIndex, inTaskListAt: taskListIndex, withTitle: title, andNote: note)
         tableView.reloadData()
     }
 }

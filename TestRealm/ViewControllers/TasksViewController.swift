@@ -45,7 +45,7 @@ final class TasksViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    private func showAlert(withTaskAt index: Int? = nil, completion: (() -> Void)? = nil) {
+    private func showAlert(withTaskAt index: Int? = nil, completion: ((String, String) -> Void)? = nil) {
         let alertBuilder = AlertControllerBuilder(
             title: index != nil ? "Edit Task" : "New Task",
             message: "What do you want to do?"
@@ -63,7 +63,7 @@ final class TasksViewController: UITableViewController {
                         inTaskListAt: taskListIndex,
                         withTitle: title,
                         andNote: note)
-                    completion()
+                    completion(title, note)
                     return
                 }
                 self?.saveTask(withTitle: title, andNote: note)
@@ -134,8 +134,17 @@ extension TasksViewController {
         
         let editAction = UIContextualAction(
             style: .normal,
-            title: "Edit") { _, _, isDone in
-                
+            title: "Edit") { [unowned self] _, _, isDone in
+                showAlert(withTaskAt: indexPath.row) { [unowned self] title, note in
+                    if indexPath.section == 0 {
+                        currentTasks[indexPath.row].title = title
+                        currentTasks[indexPath.row].title = note
+                    } else {
+                        completedTasks[indexPath.row].title = title
+                        completedTasks[indexPath.row].note = note
+                    }
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                }
                 isDone(true)
             }
         
