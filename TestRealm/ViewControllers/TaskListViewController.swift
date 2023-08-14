@@ -22,13 +22,14 @@ final class TaskListViewController: UITableViewController {
     private let storageManager = StorageManager.shared
 
     // MARK: - UIViews
-//    private lazy var segmentedControl: UISegmentedControl = {
-//        let items = ["Date", "A-Z"]
-//        let segmentedControl = UISegmentedControl(items: items)
-//        segmentedControl.selectedSegmentIndex = 0
-//        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-//        return segmentedControl
-//    }()
+    private lazy var segmentedControl: UISegmentedControl = {
+        let items = ["Date", "A-Z"]
+        let segmentedControl = UISegmentedControl(items: items)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.addTarget(self, action: #selector(sortTaskLists), for: .valueChanged)
+        return segmentedControl
+    }()
     
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -38,7 +39,7 @@ final class TaskListViewController: UITableViewController {
         
         setupNavigationBar()
         
-//        setupSegmentedControl()
+        setupSegmentedControl()
         
         taskLists = storageManager.fetchData()
     }
@@ -46,6 +47,20 @@ final class TaskListViewController: UITableViewController {
     // MARK: - Private Methods
     @objc private func addTaskList() {
         showAlert()
+    }
+    
+    @objc private func sortTaskLists() {
+        taskLists.sort { segmentedControl.selectedSegmentIndex == 0 ? $0.data < $1.data : $0.title < $1.title }
+        storageManager.save(taskLists)
+        
+        var indexPaths: [IndexPath] = []
+        
+        for index in 0..<taskLists.count {
+            let indexPath = IndexPath(row: index, section: 0)
+            indexPaths.append(indexPath)
+        }
+        
+        tableView.reloadRows(at: indexPaths, with: .automatic)
     }
     
     private func setupNavigationBar() {
@@ -61,15 +76,15 @@ final class TaskListViewController: UITableViewController {
         )
     }
     
-//    private func setupSegmentedControl() {
-//        tableView.tableHeaderView = segmentedControl
-//
-//        NSLayoutConstraint.activate(
-//            [
-//                segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
-//            ]
-//        )
-//    }
+    private func setupSegmentedControl() {
+        tableView.tableHeaderView = segmentedControl
+
+        NSLayoutConstraint.activate(
+            [
+                segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
+            ]
+        )
+    }
 }
 
 // MARK: - Task List
