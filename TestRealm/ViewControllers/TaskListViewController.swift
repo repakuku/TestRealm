@@ -78,7 +78,7 @@ final class TaskListViewController: UITableViewController {
         )
         
         alertBuilder
-            .setTextField(index != nil ? taskLists[index!].title : "")
+            .setTextField(index != nil ? taskLists[index ?? 0].title : "")
             .addAction(
                 title: index != nil ? "Update List" : "Save List",
                 style: .default) { [weak self] title, _ in

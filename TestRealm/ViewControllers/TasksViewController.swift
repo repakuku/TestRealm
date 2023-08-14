@@ -36,7 +36,24 @@ final class TasksViewController: UITableViewController {
     @objc private func addTask() {
         showAlert()
     }
-    
+
+    private func setupNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = taskList.title
+        
+        let editButton = editButtonItem
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addTask)
+        )
+        
+        navigationItem.rightBarButtonItems = [addButton, editButton]
+    }
+}
+
+// MARK: - Task
+extension TasksViewController {
     private func saveTask(withTitle title: String, andNote note: String?) {
         let task = Task(title: title, note: note ?? "", date: Date(), isComplete: false)
         taskList.tasks.append(task)
@@ -53,8 +70,8 @@ final class TasksViewController: UITableViewController {
         
         alertBuilder
             .setTextFields(
-                title: index != nil ? taskList.tasks[index!].title : "",
-                note: index != nil ? taskList.tasks[index!].note : ""
+                title: index != nil ? taskList.tasks[index ?? 0].title : "",
+                note: index != nil ? taskList.tasks[index ?? 0].note : ""
             )
             .addAction(title: index != nil ? "Edit Task" : "Save Task", style: .default) { [weak self] title, note in
                 if let index, let taskListIndex = self?.taskListIndex, let completion {
@@ -73,19 +90,18 @@ final class TasksViewController: UITableViewController {
         let alertController = alertBuilder.build()
         present(alertController, animated: true)
     }
-
-    private func setupNavigationBar() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = taskList.title
-        
-        let editButton = editButtonItem
-        let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addTask)
-        )
-        
-        navigationItem.rightBarButtonItems = [addButton, editButton]
+    
+    private func editTask(at indexPath: IndexPath) {
+        showAlert(withTaskAt: indexPath.row) { [unowned self] title, note in
+            if indexPath.section == 0 {
+                currentTasks[indexPath.row].title = title
+                currentTasks[indexPath.row].title = note
+            } else {
+                completedTasks[indexPath.row].title = title
+                completedTasks[indexPath.row].note = note
+            }
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
     }
 }
 
@@ -116,6 +132,25 @@ extension TasksViewController {
 
 // MARK: - UITableViewDelegate
 extension TasksViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        guard let index = taskList.tasks.firstIndex(of: task) else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        showAlert(withTaskAt: index) { [unowned self] title, note in
+            if indexPath.section == 0 {
+                currentTasks[indexPath.row].title = title
+                currentTasks[indexPath.row].note = note
+            } else {
+                completedTasks[indexPath.row].title = title
+                completedTasks[indexPath.row].note = note
+            }
+            delegate.editTask(at: index, inTaskListAt: taskListIndex, withTitle: title, andNote: note)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let taskIndex = taskList.tasks.firstIndex(of: indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]) else { return UISwipeActionsConfiguration() }
         
@@ -138,7 +173,7 @@ extension TasksViewController {
                 showAlert(withTaskAt: indexPath.row) { [unowned self] title, note in
                     if indexPath.section == 0 {
                         currentTasks[indexPath.row].title = title
-                        currentTasks[indexPath.row].title = note
+                        currentTasks[indexPath.row].note = note
                     } else {
                         completedTasks[indexPath.row].title = title
                         completedTasks[indexPath.row].note = note
