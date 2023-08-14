@@ -22,13 +22,13 @@ final class TaskListViewController: UITableViewController {
     private let storageManager = StorageManager.shared
 
     // MARK: - UIViews
-    private lazy var segmentedControl: UISegmentedControl = {
-        let items = ["Date", "A-Z"]
-        let segmentedControl = UISegmentedControl(items: items)
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        return segmentedControl
-    }()
+//    private lazy var segmentedControl: UISegmentedControl = {
+//        let items = ["Date", "A-Z"]
+//        let segmentedControl = UISegmentedControl(items: items)
+//        segmentedControl.selectedSegmentIndex = 0
+//        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+//        return segmentedControl
+//    }()
     
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -38,7 +38,7 @@ final class TaskListViewController: UITableViewController {
         
         setupNavigationBar()
         
-        setupSegmentedControl()
+//        setupSegmentedControl()
         
         taskLists = storageManager.fetchData()
     }
@@ -61,14 +61,24 @@ final class TaskListViewController: UITableViewController {
         )
     }
     
-    private func setupSegmentedControl() {
-        tableView.tableHeaderView = segmentedControl
-        
-        NSLayoutConstraint.activate(
-            [
-                segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
-            ]
-        )
+//    private func setupSegmentedControl() {
+//        tableView.tableHeaderView = segmentedControl
+//
+//        NSLayoutConstraint.activate(
+//            [
+//                segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
+//            ]
+//        )
+//    }
+}
+
+// MARK: - Task List
+extension TaskListViewController {
+    private func save(taskList: String) {
+        let taskList = TaskList(title: taskList, data: Date(), tasks: [])
+        taskLists.append(taskList)
+        storageManager.save(taskList)
+        tableView.reloadData()
     }
     
     private func showAlert(withTaskListAt index: Int? = nil, completion: (() -> Void)? = nil) {
@@ -94,13 +104,6 @@ final class TaskListViewController: UITableViewController {
         
         let alertController = alertBuilder.build()
         present(alertController, animated: true)
-    }
-    
-    private func save(taskList: String) {
-        let taskList = TaskList(title: taskList, data: Date(), tasks: [])
-        taskLists.append(taskList)
-        storageManager.save(taskList)
-        tableView.reloadData()
     }
 }
 
@@ -176,6 +179,7 @@ extension TaskListViewController {
     }
 }
 
+// MARK: - TasksViewControllerDelegate
 extension TaskListViewController: TasksViewControllerDelegate {
     func add(_ task: Task, toTaskListAt index: Int) {
         taskLists[index].tasks.append(task)
