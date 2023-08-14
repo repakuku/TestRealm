@@ -118,15 +118,11 @@ extension TaskListViewController {
         content.text = taskList.title
         cell.contentConfiguration = content
         
-        if taskList.tasks.count == 0 || taskList.tasks.contains(where: { !$0.isComplete }) {
-            let detailsLabel = UILabel()
-            detailsLabel.text = taskList.tasks.count.formatted()
-            detailsLabel.textColor = .systemGray
-            detailsLabel.sizeToFit()
-            cell.accessoryView = detailsLabel
-        } else if taskList.tasks.count > 0 {
-            cell.accessoryType = .checkmark
-        }
+        let detailsLabel = UILabel()
+        detailsLabel.text = taskList.tasks.count.formatted()
+        detailsLabel.textColor = .systemGray
+        detailsLabel.sizeToFit()
+        cell.accessoryView = detailsLabel
         
         return cell
     }
@@ -163,11 +159,13 @@ extension TaskListViewController {
         let doneAction = UIContextualAction(
             style: .normal,
             title: "Done") { [unowned self] _, _, isDone in
-                for taskIndex in 0..<taskLists[indexPath.row].tasks.count {
-                    taskLists[indexPath.row].tasks[taskIndex].isComplete = true
+                let index = indexPath.row
+                let tasks = taskLists[indexPath.row].tasks.count
+                for taskIndex in 0..<tasks {
+                    taskLists[index].tasks[taskIndex].isComplete = true
                 }
-                storageManager.doneTaskList(at: indexPath.row)
-                tableView.reloadData()
+                storageManager.doneTaskList(at: index)
+                tableView.reloadRows(at: [indexPath], with: .automatic)
                 isDone(true)
             }
         
