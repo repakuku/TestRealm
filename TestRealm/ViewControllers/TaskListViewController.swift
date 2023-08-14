@@ -11,6 +11,7 @@ protocol TasksViewControllerDelegate: AnyObject {
     func add(_ task: Task, toTaskListAt index: Int)
     func deleteTask(at taskIndex: Int, inTaskListAt taskListIndex: Int)
     func doneTask(at taskIndex: Int, inTaskListAt taskListIndex: Int)
+    func editTask(at taskIndex: Int, inTaskListAt taskListIndex: Int, withTitle newTitle: String, andNote note: String?)
 }
 
 final class TaskListViewController: UITableViewController {
@@ -195,6 +196,15 @@ extension TaskListViewController: TasksViewControllerDelegate {
     func doneTask(at taskIndex: Int, inTaskListAt taskListIndex: Int) {
         taskLists[taskListIndex].tasks[taskIndex].isComplete.toggle()
         storageManager.doneTask(at: taskIndex, inTaskListAt: taskListIndex)
+        tableView.reloadData()
+    }
+    
+    func editTask(at taskIndex: Int, inTaskListAt taskListIndex: Int, withTitle newTitle: String, andNote note: String? = nil) {
+        taskLists[taskListIndex].tasks[taskIndex].title = newTitle
+        if let note {
+            taskLists[taskListIndex].tasks[taskIndex] .note = note
+        }
+        // storageManager
         tableView.reloadData()
     }
 }

@@ -34,24 +34,41 @@ final class TasksViewController: UITableViewController {
 
     // MARK: - Private Methods
     @objc private func addTask() {
-        let title = "Task \(taskList.tasks.count + 1)"
-        let task = Task(
-            title: title,
-            note: "Task description",
-            date: Date(),
-            isComplete: false
-        )
+        showAlert()
+    }
+    
+    private func saveTask(withTitle title: String, andNote note: String?) {
+        let task = Task(title: title, note: note ?? "", date: Date(), isComplete: false)
         taskList.tasks.append(task)
         currentTasks.append(task)
         delegate.add(task, toTaskListAt: taskListIndex)
         tableView.reloadData()
     }
     
-    private func showAlert() {
+    private func showAlert(withTaskAt index: Int? = nil, completion: (() -> Void)? = nil) {
         let alertBuilder = AlertControllerBuilder(
-            title: "",
-            message: ""
+            title: index != nil ? "Edit Task" : "New Task",
+            message: "What do you want to do?"
         )
+        
+        alertBuilder
+            .setTextFields(
+                title: index != nil ? taskList.tasks[index!].title : "",
+                note: index != nil ? taskList.tasks[index!].note : ""
+            )
+            .addAction(title: index != nil ? "Edit Task" : "Save Task", style: .default) { [weak self] title, note in
+                if let index, let taskListIndex = self?.taskListIndex, let completion {
+                    self?.delegate.editTask(
+                        at: index,
+                        inTaskListAt: taskListIndex,
+                        withTitle: title,
+                        andNote: note)
+                    completion()
+                    return
+                }
+                self?.saveTask(withTitle: title, andNote: note)
+            }
+            .addAction(title: "Cancel", style: .destructive)
         
         let alertController = alertBuilder.build()
         present(alertController, animated: true)
@@ -144,7 +161,6 @@ extension TasksViewController {
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [doneAction, deleteAction])
-//        return UISwipeActionsConfiguration(actions: [doneAction, editAction ,deleteAction])
+        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
 }
