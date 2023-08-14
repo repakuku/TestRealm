@@ -13,7 +13,7 @@ protocol TasksViewControllerDelegate: AnyObject {
     func doneTask(at taskIndex: Int, inTaskListAt taskListIndex: Int)
 }
 
-class TaskListViewController: UITableViewController {
+final class TaskListViewController: UITableViewController {
 
     // MARK: - Private Properties
     private let cellID = "taskList"

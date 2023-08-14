@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TasksViewController: UITableViewController {
+final class TasksViewController: UITableViewController {
     
     // MARK: - Properties
     unowned var delegate: TasksViewControllerDelegate!

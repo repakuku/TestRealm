@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DifferentTaskListViewController: UIViewController {
+final class DifferentTaskListViewController: UIViewController {
     
     private let cellID = "taskList"
 
