@@ -44,11 +44,7 @@ final class TaskListViewController: UITableViewController {
 
     // MARK: - Private Methods
     @objc private func addTaskList() {
-        let number = taskLists.count
-        let taskList = TaskList(title: "Task List \(number)", data: Date(), tasks: [])
-        taskLists.append(taskList)
-        storageManager.save(taskList)
-        tableView.reloadData()
+        showAlert()
     }
     
     private func setupNavigationBar() {
@@ -72,6 +68,36 @@ final class TaskListViewController: UITableViewController {
                 segmentedControl.widthAnchor.constraint(equalTo: tableView.widthAnchor, multiplier: 1)
             ]
         )
+    }
+    
+    private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
+        let alertBuilder = AlertControllerBuilder(
+            title: taskList != nil ? "Edit List" : "New List",
+            message: "Please set title for new task list"
+        )
+        
+        alertBuilder
+            .setTextField(taskList?.title)
+            .addAction(
+                title: taskList != nil ? "Update List" : "Save List",
+                style: .default) { [weak self] title, _ in
+                    if let taskList, let completion {
+                        completion()
+                        return
+                    }
+                    self?.save(taskList: title)
+                }
+            .addAction(title: "Cancel", style: .destructive)
+        
+        let alertController = alertBuilder.build()
+        present(alertController, animated: true)
+    }
+    
+    private func save(taskList: String) {
+        let taskList = TaskList(title: taskList, data: Date(), tasks: [])
+        taskLists.append(taskList)
+        storageManager.save(taskList)
+        tableView.reloadData()
     }
 }
 

@@ -18,7 +18,7 @@ final class AlertControllerBuilder {
         )
     }
     
-    func addTextField(_ title: String?) -> AlertControllerBuilder {
+    func setTextField(_ title: String?) -> AlertControllerBuilder {
         alertController.addTextField { textField in
             textField.placeholder = "List Title"
             textField.text = title
@@ -26,7 +26,7 @@ final class AlertControllerBuilder {
         return self
     }
     
-    func addTextFields(title: String?, note: String?) -> AlertControllerBuilder {
+    func setTextFields(title: String?, note: String?) -> AlertControllerBuilder {
         alertController.addTextField { textField in
             textField.placeholder = "Task Title"
             textField.text = title
