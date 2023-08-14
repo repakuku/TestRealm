@@ -11,12 +11,12 @@ final class TasksViewController: UITableViewController {
     
     // MARK: - Properties
     unowned var delegate: TasksViewControllerDelegate!
-    var taskList: TaskList!
     var taskListIndex: Int!
     
     // MARK: - Private Properties
     private let cellID = "tasks"
     private let storageManager = StorageManager.shared
+    private var taskLists: [TaskList]!
     private var completedTasks: [Task] = []
     private var currentTasks: [Task] = []
     
@@ -24,12 +24,14 @@ final class TasksViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        taskLists = storageManager.fetchData()
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         
         setupNavigationBar()
         
-        currentTasks = taskList.tasks.filter { !$0.isComplete }
-        completedTasks = taskList.tasks.filter { $0.isComplete }
+        currentTasks = taskLists[taskListIndex].tasks.filter { !$0.isComplete }
+        completedTasks = taskLists[taskListIndex].tasks.filter { $0.isComplete }
     }
 
     // MARK: - Private Methods
@@ -39,7 +41,7 @@ final class TasksViewController: UITableViewController {
 
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        title = taskList.title
+        title = taskLists[taskListIndex].title
         
         let editButton = editButtonItem
         let addButton = UIBarButtonItem(
@@ -56,7 +58,7 @@ final class TasksViewController: UITableViewController {
 extension TasksViewController {
     private func saveTask(withTitle title: String, andNote note: String?) {
         let task = Task(title: title, note: note ?? "", date: Date(), isComplete: false)
-        taskList.tasks.append(task)
+        taskLists[taskListIndex].tasks.append(task)
         currentTasks.append(task)
         delegate.add(task, toTaskListAt: taskListIndex)
         tableView.reloadData()
@@ -70,8 +72,8 @@ extension TasksViewController {
         
         alertBuilder
             .setTextFields(
-                title: index != nil ? taskList.tasks[index ?? 0].title : "",
-                note: index != nil ? taskList.tasks[index ?? 0].note : ""
+                title: index != nil ? taskLists[taskListIndex].tasks[index ?? 0].title : "",
+                note: index != nil ? taskLists[taskListIndex].tasks[index ?? 0].note : ""
             )
             .addAction(title: index != nil ? "Edit Task" : "Save Task", style: .default) { [weak self] title, note in
                 if let index, let taskListIndex = self?.taskListIndex, let completion {
@@ -133,8 +135,9 @@ extension TasksViewController {
 // MARK: - UITableViewDelegate
 extension TasksViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        taskLists = storageManager.fetchData()
         let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
-        guard let index = taskList.tasks.firstIndex(of: task) else {
+        guard let index = taskLists[taskListIndex].tasks.firstIndex(of: task) else {
             tableView.deselectRow(at: indexPath, animated: true)
             return
         }
@@ -152,7 +155,8 @@ extension TasksViewController {
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let taskIndex = taskList.tasks.firstIndex(of: indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]) else { return UISwipeActionsConfiguration() }
+        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        guard let taskIndex = taskLists[taskListIndex].tasks.firstIndex(of: task) else { return UISwipeActionsConfiguration() }
         
         let deleteAction = UIContextualAction(
             style: .destructive,
@@ -162,7 +166,7 @@ extension TasksViewController {
                 } else {
                     completedTasks.remove(at: indexPath.row)
                 }
-                taskList.tasks.remove(at: taskIndex)
+                taskLists[taskListIndex].tasks.remove(at: taskIndex)
                 delegate.deleteTask(at: taskIndex, inTaskListAt: taskListIndex)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
@@ -196,7 +200,7 @@ extension TasksViewController {
                     let removedTask = completedTasks.remove(at: indexPath.row)
                     currentTasks.append(removedTask)
                 }
-                taskList.tasks[taskIndex].isComplete.toggle()
+                taskLists[taskListIndex].tasks[taskIndex].isComplete.toggle()
                 delegate.doneTask(at: taskIndex, inTaskListAt: taskListIndex)
                 
                 tableView.reloadData()

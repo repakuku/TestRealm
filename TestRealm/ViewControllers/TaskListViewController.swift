@@ -137,7 +137,6 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let tasksVC = TasksViewController()
         tasksVC.delegate = self
-        tasksVC.taskList = taskLists[indexPath.row]
         tasksVC.taskListIndex = indexPath.row
         show(tasksVC, sender: nil)
     }
