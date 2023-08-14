@@ -48,6 +48,12 @@ final class StorageManager {
         save(taskLists)
     }
     
+    func editTaskList(at index: Int, newValue: String) {
+        var taskLists = fetchData()
+        taskLists[index].title = newValue
+        save(taskLists)
+    }
+    
     // Task
     func save(_ task: Task, toTaskListAt index: Int) {
         var taskLists = fetchData()

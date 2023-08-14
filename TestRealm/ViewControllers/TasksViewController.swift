@@ -47,8 +47,16 @@ final class TasksViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    private func showAlert() {
+        let alertBuilder = AlertControllerBuilder(
+            title: "",
+            message: ""
+        )
+        
+        let alertController = alertBuilder.build()
+        present(alertController, animated: true)
+    }
 
-    
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = taskList.title

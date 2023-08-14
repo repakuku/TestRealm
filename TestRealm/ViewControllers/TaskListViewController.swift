@@ -70,18 +70,20 @@ final class TaskListViewController: UITableViewController {
         )
     }
     
-    private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
+    private func showAlert(withTaskListAt index: Int? = nil, completion: (() -> Void)? = nil) {
         let alertBuilder = AlertControllerBuilder(
-            title: taskList != nil ? "Edit List" : "New List",
+            title: index != nil ? "Edit List" : "New List",
             message: "Please set title for new task list"
         )
         
         alertBuilder
-            .setTextField(taskList?.title)
+            .setTextField(index != nil ? taskLists[index!].title : "")
             .addAction(
-                title: taskList != nil ? "Update List" : "Save List",
+                title: index != nil ? "Update List" : "Save List",
                 style: .default) { [weak self] title, _ in
-                    if let taskList, let completion {
+                    if let index, let completion {
+                        self?.taskLists[index].title = title
+                        self?.storageManager.editTaskList(at: index, newValue: title)
                         completion()
                         return
                     }
@@ -140,6 +142,7 @@ extension TaskListViewController {
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
         let deleteAction = UIContextualAction(
             style: .destructive,
             title: "Delete") { [unowned self] _, _, _ in
@@ -150,8 +153,11 @@ extension TaskListViewController {
         
         let editAction = UIContextualAction(
             style: .normal,
-            title: "Edit") { _, _, isDone in
-                
+            title: "Edit") { [unowned self] _, _, isDone in
+                self.showAlert(
+                    withTaskListAt: indexPath.row) {
+                        tableView.reloadRows(at: [indexPath], with: .automatic)
+                    }
                 isDone(true)
             }
         
@@ -169,7 +175,7 @@ extension TaskListViewController {
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
         
-        return UISwipeActionsConfiguration(actions: [doneAction, deleteAction])
+        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
 }
 
