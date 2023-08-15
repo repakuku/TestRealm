@@ -6,16 +6,17 @@
 //
 
 import Foundation
+import RealmSwift
 
-struct TaskList: Codable {
-    var title = ""
-    var data = Date()
-    var tasks: [Task] = []
+final class TaskList: Object {
+    @Persisted var title = ""
+    @Persisted var data = Date()
+    @Persisted var tasks = List<Task>()
 }
 
-struct Task: Codable, Equatable {
-    var title = ""
-    var note = ""
-    var date = Date()
-    var isComplete = false
+final class Task: Object {
+    @Persisted var title = ""
+    @Persisted var note = ""
+    @Persisted var date = Date()
+    @Persisted var isComplete = false
 }
