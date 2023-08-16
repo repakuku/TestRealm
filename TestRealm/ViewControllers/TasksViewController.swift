@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 final class TasksViewController: UITableViewController {
     
@@ -15,8 +16,8 @@ final class TasksViewController: UITableViewController {
     // MARK: - Private Properties
     private let cellID = "tasks"
     private let storageManager = StorageManager.shared
-    private var completedTasks: [Task] = []
-    private var currentTasks: [Task] = []
+    private var completedTasks: Results<Task>!
+    private var currentTasks: Results<Task>!
     
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -26,8 +27,8 @@ final class TasksViewController: UITableViewController {
         
         setupNavigationBar()
         
-        currentTasks = taskList.tasks.filter { !$0.isComplete }
-        completedTasks = taskList.tasks.filter { $0.isComplete }
+        currentTasks = taskList.tasks.filter("isComplete = false")
+        completedTasks = taskList.tasks.filter("isComplete = true")
     }
 
     // MARK: - Private Methods
@@ -48,12 +49,12 @@ final class TasksViewController: UITableViewController {
         
         navigationItem.rightBarButtonItems = [addButton, editButton]
     }
-}
-
-// MARK: - Task
-extension TasksViewController {
-    private func saveTask() {
-        //
+    
+    private func save(_ task: String, withNote note: String) {
+        storageManager.save(task, withNote: note, to: taskList) { task in
+            let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
+            tableView.insertRows(at: [rowIndex], with: .automatic)
+        }
         tableView.reloadData()
     }
     
@@ -73,7 +74,7 @@ extension TasksViewController {
                     //
                     return
                 }
-                self?.saveTask()
+                self?.save(title, withNote: note)
             }
             .addAction(title: "Cancel", style: .destructive)
         
@@ -110,19 +111,19 @@ extension TasksViewController {
 // MARK: - UITableViewDelegate
 extension TasksViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
-        
-        showAlert(with: task) { [unowned self] title, note in
-            if indexPath.section == 0 {
-                currentTasks[indexPath.row].title = title
-                currentTasks[indexPath.row].note = note
-            } else {
-                completedTasks[indexPath.row].title = title
-                completedTasks[indexPath.row].note = note
-            }
-            
-            tableView.reloadRows(at: [indexPath], with: .automatic)
-        }
+//        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+//
+//        showAlert(with: task) { [unowned self] title, note in
+//            if indexPath.section == 0 {
+//                currentTasks[indexPath.row].title = title
+//                currentTasks[indexPath.row].note = note
+//            } else {
+//                completedTasks[indexPath.row].title = title
+//                completedTasks[indexPath.row].note = note
+//            }
+//
+//            tableView.reloadRows(at: [indexPath], with: .automatic)
+//        }
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
