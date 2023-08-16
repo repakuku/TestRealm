@@ -30,7 +30,7 @@ final class TaskListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        taskLists = storageManager.realm.objects(TaskList.self)
+        taskLists = storageManager.realm.objects(TaskList.self).sorted(byKeyPath: "date")
         createTempData()
         
         setupNavigationBar()
@@ -73,7 +73,8 @@ final class TaskListViewController: UITableViewController {
     }
     
     private func sort() {
-        //
+        let keyPath = segmentedControl.selectedSegmentIndex == 0 ? "date" : "title"
+        taskLists = taskLists.sorted(byKeyPath: keyPath)
         
         var indexPaths: [IndexPath] = []
         
@@ -140,12 +141,16 @@ extension TaskListViewController {
         content.text = taskList.title
         cell.contentConfiguration = content
         
-        // checkmark
-        let detailsLabel = UILabel()
-        detailsLabel.text = taskList.tasks.count.formatted()
-        detailsLabel.textColor = .systemGray
-        detailsLabel.sizeToFit()
-        cell.accessoryView = detailsLabel
+        // It needs to be fixed
+        if taskList.tasks.contains(where: { !$0.isComplete }) || taskList.tasks.count == 0 {
+            let detailsLabel = UILabel()
+            detailsLabel.text = taskList.tasks.count.formatted()
+            detailsLabel.textColor = .systemGray
+            detailsLabel.sizeToFit()
+            cell.accessoryView = detailsLabel
+        } else {
+            cell.accessoryType = .checkmark
+        }
         
         return cell
     }

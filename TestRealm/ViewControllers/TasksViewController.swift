@@ -112,19 +112,11 @@ extension TasksViewController {
 // MARK: - UITableViewDelegate
 extension TasksViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
-//
-//        showAlert(with: task) { [unowned self] title, note in
-//            if indexPath.section == 0 {
-//                currentTasks[indexPath.row].title = title
-//                currentTasks[indexPath.row].note = note
-//            } else {
-//                completedTasks[indexPath.row].title = title
-//                completedTasks[indexPath.row].note = note
-//            }
-//
-//            tableView.reloadRows(at: [indexPath], with: .automatic)
-//        }
+        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+
+        showAlert(with: task) {
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -151,6 +143,7 @@ extension TasksViewController {
             style: .normal,
             title: doneButtonTitle) { [unowned self] _, _, isDone in
                 storageManager.done(task)
+                // reload rows
                 tableView.reloadData()
                 isDone(true)
             }
