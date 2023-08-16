@@ -97,7 +97,7 @@ final class TaskListViewController: UITableViewController {
                 title: taskList != nil ? "Update List" : "Save List",
                 style: .default) { [weak self] newTitle, _ in
                     if let taskList, let completion {
-                        self?.storageManager.edit(taskList, with: newTitle)
+                        self?.storageManager.edit(taskList, newTitle: newTitle)
                         completion()
                         return
                     }
