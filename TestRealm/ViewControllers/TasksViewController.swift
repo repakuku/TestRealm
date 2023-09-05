@@ -55,7 +55,6 @@ final class TasksViewController: UITableViewController {
             let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
         }
-        tableView.reloadData()
     }
     
     private func showAlert(with task: Task? = nil, completion: (() -> Void)? = nil) {

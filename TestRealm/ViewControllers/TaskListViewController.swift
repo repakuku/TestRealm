@@ -29,14 +29,13 @@ final class TaskListViewController: UITableViewController {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         
         taskLists = storageManager.realm.objects(TaskList.self).sorted(byKeyPath: "date")
         createTempData()
         
         setupNavigationBar()
         setupSegmentedControl()
-        
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -137,6 +136,8 @@ extension TaskListViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
+        
+        content.text = taskList.title
 
         #warning("TODO: fix it")
         if taskList.tasks.contains(where: { !$0.isComplete }) || taskList.tasks.count == 0 {
@@ -149,7 +150,6 @@ extension TaskListViewController {
             cell.accessoryType = .checkmark
         }
         
-        content.text = taskList.title
         cell.contentConfiguration = content
         
         return cell
