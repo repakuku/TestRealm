@@ -137,11 +137,8 @@ extension TaskListViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
-        
-        content.text = taskList.title
-        cell.contentConfiguration = content
-        
-        // It needs to be fixed
+
+        #warning("TODO: fix it")
         if taskList.tasks.contains(where: { !$0.isComplete }) || taskList.tasks.count == 0 {
             let detailsLabel = UILabel()
             detailsLabel.text = taskList.tasks.count.formatted()
@@ -151,6 +148,9 @@ extension TaskListViewController {
         } else {
             cell.accessoryType = .checkmark
         }
+        
+        content.text = taskList.title
+        cell.contentConfiguration = content
         
         return cell
     }
