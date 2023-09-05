@@ -143,8 +143,15 @@ extension TasksViewController {
             style: .normal,
             title: doneButtonTitle) { [unowned self] _, _, isDone in
                 storageManager.done(task)
-                // reload rows
-                tableView.reloadData()
+                
+                let sourceIndexPath = indexPath
+                
+                let row = task.isComplete ? completedTasks.count - 1 : currentTasks.count - 1
+                let section = task.isComplete ? 1 : 0
+                let destinationIndexPath = IndexPath(row: row, section: section)
+                
+                tableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
+                
                 isDone(true)
             }
         
